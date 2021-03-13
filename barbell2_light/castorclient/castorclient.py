@@ -3,7 +3,7 @@ import json
 
 from oauthlib.oauth2 import BackendApplicationClient
 from requests_oauthlib import OAuth2Session
-from barbell2.utils import Logger
+from barbell2_light.utils import Logger
 
 
 class CastorClient:
