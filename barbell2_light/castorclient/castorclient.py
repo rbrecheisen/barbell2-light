@@ -8,19 +8,14 @@ from barbell2_light.utils import Logger
 
 class CastorClient:
 
-    def __init__(self, client_id=None, client_secret=None, log_dir='.'):
-        # if client_id is None:
-        #     with open('{}/castorclientid.txt'.format(os.environ['HOME']), 'r') as f:
-        #         client_id = f.readline().strip()
-        # if client_secret is None:
-        #     with open('{}/castorclientsecret.txt'.format(os.environ['HOME']), 'r') as f:
-        #         client_secret = f.readline().strip()
+    def __init__(self, client_id=None, client_secret=None, log_dir='.', cache_dir='castor_cache'):
         client_id, client_secret = self.get_credentials(client_id, client_secret)
         self.base_url = 'https://data.castoredc.com'
         self.token_url = self.base_url + '/oauth/token'
         self.api_url = self.base_url + '/api'
         self.session = self.create_session(client_id, client_secret, self.token_url)
         self.logger = Logger(prefix='log_castorclient', to_dir=log_dir)
+        self.cache_dir = cache_dir
 
     @staticmethod
     def get_credentials(client_id=None, client_secret=None):
@@ -79,9 +74,9 @@ class CastorClient:
         return None
 
     def get_fields(self, study_id, use_cache=True, verbose=False):
-        if use_cache and os.path.isfile('cache/fields_{}.json'.format(study_id)):
-            self.logger.print('Loading fields from cache/fields_{}'.format(study_id))
-            fields = json.load(open('cache/fields_{}.json'.format(study_id), 'r'))
+        if use_cache and os.path.isfile('{}/fields_{}.json'.format(self.cache_dir, study_id)):
+            self.logger.print('Loading fields from {}/fields_{}'.format(self.cache_dir, study_id))
+            fields = json.load(open('{}/fields_{}.json'.format(self.cache_dir, study_id), 'r'))
             return fields
         else:
             self.logger.print('Loading fields for study {} from Castor'.format(study_id))
@@ -96,8 +91,8 @@ class CastorClient:
                     fields.append(field)
                     if verbose:
                         self.logger.print(field['id'])
-            os.makedirs('cache', exist_ok=True)
-            json.dump(fields, open('cache/fields_{}.json'.format(study_id), 'w'))
+            os.makedirs('{}'.format(self.cache_dir), exist_ok=True)
+            json.dump(fields, open('{}/fields_{}.json'.format(self.cache_dir, study_id), 'w'))
             return fields
 
     @staticmethod
@@ -112,9 +107,9 @@ class CastorClient:
         return f['id']
 
     def get_records(self, study_id, use_cache=True, verbose=False):
-        if use_cache and os.path.isfile('cache/records_{}.json'.format(study_id)):
-            self.logger.print('Loading records from cache/records_{}.json'.format(study_id))
-            records = json.load(open('cache/records_{}.json'.format(study_id), 'r'))
+        if use_cache and os.path.isfile('{}/records_{}.json'.format(self.cache_dir, study_id)):
+            self.logger.print('Loading records from {}/records_{}.json'.format(self.cache_dir, study_id))
+            records = json.load(open('{}/records_{}.json'.format(self.cache_dir, study_id), 'r'))
             return records
         else:
             self.logger.print('Loading records for study {} from Castor'.format(study_id))
@@ -130,8 +125,8 @@ class CastorClient:
                         records.append(record)
                         if verbose:
                             self.logger.print(record['id'])
-            os.makedirs('cache', exist_ok=True)
-            json.dump(records, open('cache/records_{}.json'.format(study_id), 'w'))
+            os.makedirs('{}'.format(self.cache_dir), exist_ok=True)
+            json.dump(records, open('{}/records_{}.json'.format(self.cache_dir, study_id), 'w'))
             return records
 
     def get_field_data(self, study_id, record_id, field_id):
