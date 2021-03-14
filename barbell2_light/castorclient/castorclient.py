@@ -3,12 +3,12 @@ import json
 
 from oauthlib.oauth2 import BackendApplicationClient
 from requests_oauthlib import OAuth2Session
-from barbell2_light.utils import Logger
+from barbell2.utils import Logger
 
 
 class CastorClient:
 
-    def __init__(self, client_id=None, client_secret=None):
+    def __init__(self, client_id=None, client_secret=None, log_dir='.'):
         if client_id is None:
             with open('{}/castorclientid.txt'.format(os.environ['HOME']), 'r') as f:
                 client_id = f.readline().strip()
@@ -19,7 +19,7 @@ class CastorClient:
         self.token_url = self.base_url + '/oauth/token'
         self.api_url = self.base_url + '/api'
         self.session = self.create_session(client_id, client_secret, self.token_url)
-        self.logger = Logger(prefix='log_castorclient')
+        self.logger = Logger(prefix='log_castorclient', to_dir=log_dir)
 
     @staticmethod
     def create_session(client_id, client_secret, token_url):
