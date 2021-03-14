@@ -78,22 +78,22 @@ class CastorClient:
             self.logger.print('Loading fields from {}/fields_{}'.format(self.cache_dir, study_id))
             fields = json.load(open('{}/fields_{}.json'.format(self.cache_dir, study_id), 'r'))
             return fields
-        else:
-            self.logger.print('Loading fields for study {} from Castor'.format(study_id))
-            url = self.api_url + '/study/{}/field'.format(study_id)
+        self.logger.print('Loading fields for study {} from Castor'.format(study_id))
+        url = self.api_url + '/study/{}/field'.format(study_id)
+        response = self.session.get(url).json()
+        page_count = response['page_count']
+        fields = []
+        for i in range(1, page_count + 1):
+            url = self.api_url + '/study/{}/field?page={}'.format(study_id, i)
             response = self.session.get(url).json()
-            page_count = response['page_count']
-            fields = []
-            for i in range(1, page_count + 1):
-                url = self.api_url + '/study/{}/field?page={}'.format(study_id, i)
-                response = self.session.get(url).json()
-                for field in response['_embedded']['fields']:
-                    fields.append(field)
-                    if verbose:
-                        self.logger.print(field['id'])
+            for field in response['_embedded']['fields']:
+                fields.append(field)
+                if verbose:
+                    self.logger.print(field['id'])
+        if use_cache:
             os.makedirs('{}'.format(self.cache_dir), exist_ok=True)
             json.dump(fields, open('{}/fields_{}.json'.format(self.cache_dir, study_id), 'w'))
-            return fields
+        return fields
 
     @staticmethod
     def get_field(name, fields):
@@ -111,23 +111,23 @@ class CastorClient:
             self.logger.print('Loading records from {}/records_{}.json'.format(self.cache_dir, study_id))
             records = json.load(open('{}/records_{}.json'.format(self.cache_dir, study_id), 'r'))
             return records
-        else:
-            self.logger.print('Loading records for study {} from Castor'.format(study_id))
-            url = self.api_url + '/study/{}/record'.format(study_id)
+        self.logger.print('Loading records for study {} from Castor'.format(study_id))
+        url = self.api_url + '/study/{}/record'.format(study_id)
+        response = self.session.get(url).json()
+        page_count = response['page_count']
+        records = []
+        for i in range(1, page_count + 1):
+            url = self.api_url + '/study/{}/record?page={}'.format(study_id, i)
             response = self.session.get(url).json()
-            page_count = response['page_count']
-            records = []
-            for i in range(1, page_count + 1):
-                url = self.api_url + '/study/{}/record?page={}'.format(study_id, i)
-                response = self.session.get(url).json()
-                for record in response['_embedded']['records']:
-                    if not record['id'].startswith('ARCHIVED'):
-                        records.append(record)
-                        if verbose:
-                            self.logger.print(record['id'])
+            for record in response['_embedded']['records']:
+                if not record['id'].startswith('ARCHIVED'):
+                    records.append(record)
+                    if verbose:
+                        self.logger.print(record['id'])
+        if use_cache:
             os.makedirs('{}'.format(self.cache_dir), exist_ok=True)
             json.dump(records, open('{}/records_{}.json'.format(self.cache_dir, study_id), 'w'))
-            return records
+        return records
 
     def get_field_data(self, study_id, record_id, field_id):
         url = self.api_url + '/study/{}/record/{}/study-data-point/{}'.format(study_id, record_id, field_id)
