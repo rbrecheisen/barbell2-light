@@ -9,17 +9,49 @@ from barbell2_light.utils import Logger
 class CastorClient:
 
     def __init__(self, client_id=None, client_secret=None, log_dir='.'):
-        if client_id is None:
-            with open('{}/castorclientid.txt'.format(os.environ['HOME']), 'r') as f:
-                client_id = f.readline().strip()
-        if client_secret is None:
-            with open('{}/castorclientsecret.txt'.format(os.environ['HOME']), 'r') as f:
-                client_secret = f.readline().strip()
+        # if client_id is None:
+        #     with open('{}/castorclientid.txt'.format(os.environ['HOME']), 'r') as f:
+        #         client_id = f.readline().strip()
+        # if client_secret is None:
+        #     with open('{}/castorclientsecret.txt'.format(os.environ['HOME']), 'r') as f:
+        #         client_secret = f.readline().strip()
+        client_id, client_secret = self.get_credentials(client_id, client_secret)
         self.base_url = 'https://data.castoredc.com'
         self.token_url = self.base_url + '/oauth/token'
         self.api_url = self.base_url + '/api'
         self.session = self.create_session(client_id, client_secret, self.token_url)
         self.logger = Logger(prefix='log_castorclient', to_dir=log_dir)
+
+    @staticmethod
+    def get_credentials(client_id=None, client_secret=None):
+        cid = client_id
+        cse = client_secret
+        if cid is None:
+            cid_file = '{}/castorclientid.txt'.format(os.environ['HOME'])
+            if os.path.isfile(cid_file):
+                with open(cid_file, 'r') as f:
+                    cid = f.readline().strip()
+            else:
+                cid = os.environ.get('CASTOR_CLIENT_ID', None)
+                if cid is None:
+                    raise RuntimeError('Castor client ID not found in: \n'
+                                       '(1) arguments\n'
+                                       '(2) $HOME/castorclientid.txt\n'
+                                       '(3) CASTOR_CLIENT_ID environment variable')
+        if cse is None:
+            cse_file = '{}/castorclientsecret.txt'.format(os.environ['HOME'])
+            if os.path.isfile(cse_file):
+                with open(cse_file, 'r') as f:
+                    cse = f.readline().strip()
+            else:
+                cse = os.environ.get('CASTOR_CLIENT_SECRET', None)
+                if cse is None:
+                    raise RuntimeError('Castor client secret not found in: \n'
+                                       '(1) arguments\n'
+                                       '(2) $HOME/castorclientsecret.txt\n'
+                                       '(3) CASTOR_CLIENT_SECRET environment variable')
+        return cid, cse
+
 
     @staticmethod
     def create_session(client_id, client_secret, token_url):
