@@ -2,7 +2,7 @@
 
 __author__ = """Ralph Brecheisen"""
 __email__ = 'ralph.brecheisen@gmail.com'
-__version__ = '0.4.4'
+__version__ = '0.5.0'
 
 from .castorclient import CastorClient
 from .utils import Logger
