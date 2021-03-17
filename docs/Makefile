@@ -4,7 +4,7 @@
 # You can set these variables from the command line.
 SPHINXOPTS    =
 SPHINXBUILD   = python -msphinx
-SPHINXPROJ    = barbell2_light
+SPHINXPROJ    = barbell2-light
 SOURCEDIR     = .
 BUILDDIR      = _build
 

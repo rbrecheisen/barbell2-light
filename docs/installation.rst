@@ -8,13 +8,13 @@ Installation
 Stable release
 --------------
 
-To install barbell2_light, run this command in your terminal:
+To install barbell2-light, run this command in your terminal:
 
 .. code-block:: console
 
-    $ pip install barbell2_light
+    $ pip install barbell2-light
 
-This is the preferred method to install barbell2_light, as it will always install the most recent stable release.
+This is the preferred method to install barbell2-light, as it will always install the most recent stable release.
 
 If you don't have `pip`_ installed, this `Python installation guide`_ can guide
 you through the process.
@@ -26,19 +26,19 @@ you through the process.
 From sources
 ------------
 
-The sources for barbell2_light can be downloaded from the `Github repo`_.
+The sources for barbell2-light can be downloaded from the `Github repo`_.
 
 You can either clone the public repository:
 
 .. code-block:: console
 
-    $ git clone git://github.com/rbrecheisen/barbell2_light
+    $ git clone git://github.com/rbrecheisen/barbell2-light
 
 Or download the `tarball`_:
 
 .. code-block:: console
 
-    $ curl -OJL https://github.com/rbrecheisen/barbell2_light/tarball/master
+    $ curl -OJL https://github.com/rbrecheisen/barbell2-light/tarball/master
 
 Once you have a copy of the source, you can install it with:
 
@@ -47,5 +47,5 @@ Once you have a copy of the source, you can install it with:
     $ python setup.py install
 
 
-.. _Github repo: https://github.com/rbrecheisen/barbell2_light
-.. _tarball: https://github.com/rbrecheisen/barbell2_light/tarball/master
+.. _Github repo: https://github.com/rbrecheisen/barbell2-light
+.. _tarball: https://github.com/rbrecheisen/barbell2-light/tarball/master

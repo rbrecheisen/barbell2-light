@@ -1,4 +1,4 @@
-* barbell2_light version:
+* barbell2-light version:
 * Python version:
 * Operating System:
 

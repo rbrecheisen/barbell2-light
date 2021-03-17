@@ -1,13 +1,13 @@
 ==============
-barbell2_light
+barbell2-light
 ==============
 
 
-.. image:: https://img.shields.io/pypi/v/barbell2_light.svg
-        :target: https://pypi.python.org/pypi/barbell2_light
+.. image:: https://img.shields.io/pypi/v/barbell2-light.svg
+        :target: https://pypi.python.org/pypi/barbell2-light
 
-.. image:: https://img.shields.io/travis/rbrecheisen/barbell2_light.svg
-        :target: https://travis-ci.com/rbrecheisen/barbell2_light
+.. image:: https://img.shields.io/travis/rbrecheisen/barbell2-light.svg
+        :target: https://travis-ci.com/rbrecheisen/barbell2-light
 
 .. image:: https://readthedocs.org/projects/barbell2-light/badge/?version=latest
         :target: https://barbell2-light.readthedocs.io/en/latest/?badge=latest
