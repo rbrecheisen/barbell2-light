@@ -1,16 +1,16 @@
 ==============
-barbell2-light
+barbell2light
 ==============
 
 
-.. image:: https://img.shields.io/pypi/v/barbell2-light.svg
-        :target: https://pypi.python.org/pypi/barbell2-light
+.. image:: https://img.shields.io/pypi/v/barbell2light.svg
+        :target: https://pypi.python.org/pypi/barbell2light
 
-.. image:: https://img.shields.io/travis/rbrecheisen/barbell2-light.svg
-        :target: https://travis-ci.com/rbrecheisen/barbell2-light
+.. image:: https://img.shields.io/travis/rbrecheisen/barbell2light.svg
+        :target: https://travis-ci.com/rbrecheisen/barbell2light
 
-.. image:: https://readthedocs.org/projects/barbell2-light/badge/?version=latest
-        :target: https://barbell2-light.readthedocs.io/en/latest/?badge=latest
+.. image:: https://readthedocs.org/projects/barbell2light/badge/?version=latest
+        :target: https://barbell2light.readthedocs.io/en/latest/?badge=latest
         :alt: Documentation Status
 
 
@@ -20,7 +20,7 @@ Python Boilerplate contains all the boilerplate you need to create a Python pack
 
 
 * Free software: MIT license
-* Documentation: https://barbell2-light.readthedocs.io.
+* Documentation: https://barbell2light.readthedocs.io.
 
 
 Features

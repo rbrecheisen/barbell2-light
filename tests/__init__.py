@@ -1,1 +1,1 @@
-"""Unit test package for barbell2-light."""
+"""Unit test package for barbell2light."""

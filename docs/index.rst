@@ -1,4 +1,4 @@
-Welcome to barbell2-light's documentation!
+Welcome to barbell2light's documentation!
 ======================================
 
 .. toctree::

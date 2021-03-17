@@ -1,4 +1,4 @@
-"""Top-level package for barbell2-light."""
+"""Top-level package for barbell2light."""
 
 __author__ = """Ralph Brecheisen"""
 __email__ = 'ralph.brecheisen@gmail.com'

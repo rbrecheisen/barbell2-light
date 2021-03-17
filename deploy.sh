@@ -1,6 +1,6 @@
 #!/bin/bash
 
-export PACKAGE=barbell2-light
+export PACKAGE=barbell2light
 
 # Check if Twine is installed for uploading the package
 which twine
