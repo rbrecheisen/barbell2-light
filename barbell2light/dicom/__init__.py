@@ -1,4 +1,5 @@
 import os
+import numpy as np
 
 from pydicom._dicom_dict import DicomDictionary
 
@@ -34,6 +35,12 @@ def get_dictionary_items():
 
 def get_pixels(p, normalize=False):
     pixels = p.pixel_array
-    if normalize:
+    if not normalize:
+        return pixels
+    if normalize is True:
         return p.RescaleSlope * pixels + p.RescaleIntercept
+    if isinstance(normalize, int):
+        return (pixels + np.min(pixels)) / (np.max(pixels) - np.min(pixels)) * normalize
+    if isinstance(normalize, list):
+        return (pixels + np.min(pixels)) / (np.max(pixels) - np.min(pixels)) * normalize[1] + normalize[0]
     return pixels
