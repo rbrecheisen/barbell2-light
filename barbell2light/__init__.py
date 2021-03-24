@@ -5,6 +5,7 @@ __email__ = 'ralph.brecheisen@gmail.com'
 __version__ = '0.5.0'
 
 from .castorclient import CastorClient
+from .castorexportclient import CastorExportClient
 from .utils import Logger
 from .utils import current_time_millis
 from .utils import current_time_secs
