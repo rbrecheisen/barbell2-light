@@ -244,7 +244,9 @@ class CastorExportClient:
 
     def find_duplicate_records(self, columns):
         """
-        Finds duplicate records in the export file based on the given key columns.
+        Finds duplicate records in the export file based on the given key columns, e.g., you can
+        call this function as find_duplicate_records(['dpca_idcode', 'dpca_datok'] to find all
+        records that have the same combination of SAP number and surgery date.
         :return: Dictionary with keys that contain more than 1 record.
         """
         for column in columns:
