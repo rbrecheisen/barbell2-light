@@ -129,6 +129,19 @@ class CastorClient:
             json.dump(records, open('{}/records_{}.json'.format(self.cache_dir, study_id), 'w'))
         return records
 
+    def get_option_groups(self, study_id, verbose):
+        url = self.api_url + '/study/{}/field-optiongroup'.format(study_id)
+        response = self.session.get(url).json()
+        page_count = response['page_count']
+        fields = []
+        for i in range(1, page_count + 1):
+            url = self.api_url + '/study/{}/field-optiongroup?page={}'.format(study_id, i)
+            response = self.session.get(url).json()
+            for field in response['_embedded']['fieldOptionGroups']:
+                fields.append(field)
+                if verbose:
+                    self.logger.print(field['id'])
+
     def get_field_data(self, study_id, record_id, field_id):
         url = self.api_url + '/study/{}/record/{}/study-data-point/{}'.format(study_id, record_id, field_id)
         field_data = self.session.get(url).json()
