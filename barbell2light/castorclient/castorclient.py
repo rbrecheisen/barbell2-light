@@ -106,6 +106,15 @@ class CastorClient:
         f = self.get_field(name, fields)
         return f['id']
 
+    @staticmethod
+    def get_option_name(value, option_group_name, option_groups):
+        for option_group in option_groups:
+            if option_group['name'] == option_group_name:
+                for option in option_group['options']:
+                    if option['value'] == value:
+                        return option['name']
+        return None
+
     def get_records(self, study_id, use_cache=True, verbose=False):
         if use_cache and os.path.isfile('{}/records_{}.json'.format(self.cache_dir, study_id)):
             self.logger.print('Loading records from {}/records_{}.json'.format(self.cache_dir, study_id))
