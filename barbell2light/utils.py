@@ -30,6 +30,11 @@ class MyTestArguments(SimpleNamespace):
     pass
 
 
+def get_now():
+    now = datetime.datetime.now()
+    return now.strftime('%Y%m%d%H%M%S')
+
+
 class Logger(object):
 
     def __init__(self, prefix='log', to_dir='.', timestamp=True):
