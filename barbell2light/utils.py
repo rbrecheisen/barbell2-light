@@ -38,14 +38,15 @@ def get_now():
 class Logger(object):
 
     def __init__(self, prefix='log', to_dir='.', timestamp=True):
-        self.f = None
+        self.to_dir = to_dir
+        self.file_path = None
         self.timestamp = timestamp
-        os.makedirs(to_dir, exist_ok=True)
+        os.makedirs(self.to_dir, exist_ok=True)
         now = datetime.datetime.now()
         if not prefix.endswith('_'):
             prefix = prefix + '_'
-        file_name = '{}{}.txt'.format(prefix, now.strftime('%Y%m%d%H%M%S'))
-        self.f = open(os.path.join(to_dir, file_name), 'w')
+        self.file_name = '{}{}.txt'.format(prefix, now.strftime('%Y%m%d%H%M%S'))
+        self.file_path = open(os.path.join(self.to_dir, self.file_name), 'w')
 
     def print(self, message):
         now = datetime.datetime.now()
@@ -54,11 +55,11 @@ class Logger(object):
         else:
             message = str(message)
         print(message)
-        if self.f:
-            self.f.write(message + '\n')
+        if self.file_path:
+            self.file_path.write(message + '\n')
 
     def close(self):
-        self.f.close()
+        self.file_path.close()
 
     def __del__(self):
         self.close()
