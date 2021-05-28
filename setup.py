@@ -14,7 +14,9 @@ with open('HISTORY.rst') as history_file:
 
 requirements = [
     'oauthlib',
-    'requests_oauthlib'
+    'requests_oauthlib',
+    'pydicom',
+    'cmd2',
 ]
 
 setup_requirements = []
