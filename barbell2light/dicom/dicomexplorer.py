@@ -1,9 +1,8 @@
 import os
 import cmd2
-import json
 import pydicom
 
-from . import is_dicom_file, tag_for_name, get_dictionary_items
+from barbell2light.dicom import is_dicom_file, tag_for_name, get_dictionary_items
 
 
 class DicomExplorer:

@@ -17,6 +17,8 @@ requirements = [
     'requests_oauthlib',
     'pydicom',
     'cmd2',
+    'pandas',
+    'gnureadline',
 ]
 
 setup_requirements = []
