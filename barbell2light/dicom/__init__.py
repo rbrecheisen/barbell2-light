@@ -52,5 +52,5 @@ def is_compressed(p):
     try:
         p.convert_pixel_data()
         return False
-    except NotImplementedError:
+    except RuntimeError:
         return True
