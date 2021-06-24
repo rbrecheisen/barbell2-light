@@ -13,7 +13,9 @@ def is_dicom_file(file_path_or_obj):
             return False
         file_obj = open(file_obj, "rb")
     try:
-        return file_obj.read(132).decode('ASCII')[-4:] == 'DICM'
+        result = file_obj.read(132).decode('ASCII')[-4:] == 'DICM'
+        file_obj.seek(0)
+        return result
     except UnicodeDecodeError:
         return False
 
