@@ -54,3 +54,15 @@ def is_compressed(p):
         return False
     except RuntimeError:
         return True
+
+
+def decompress(f):
+    result = os.system('which gdcmconv>/dev/null')
+    if result > 0:
+        raise RuntimeError('Tool "gdcmconv" is not installed')
+    items = os.path.splitext(f)
+    base_name, extension = items[0], items[1]
+    f_target = os.path.join(base_name, '_raw.', extension)
+    command = 'gdcmconv --raw {} {}'.format(f, f_target)
+    os.system(command)
+    return f_target
