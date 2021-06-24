@@ -46,3 +46,11 @@ def get_pixels(p, normalize=False):
     if isinstance(normalize, list):
         return (pixels + np.min(pixels)) / (np.max(pixels) - np.min(pixels)) * normalize[1] + normalize[0]
     return pixels
+
+
+def is_compressed(p):
+    try:
+        p.convert_pixel_data()
+        return False
+    except NotImplementedError:
+        return True
