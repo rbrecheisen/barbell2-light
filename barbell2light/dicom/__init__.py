@@ -49,7 +49,7 @@ def get_pixels(p, normalize=False):
     return pixels
 
 
-def get_tag_pixels(f, shape):
+def get_tag_pixels(f, shape=None):
     converter = Tag2NumPy(shape)
     converter.set_input_tag_file_path(f)
     converter.execute()
