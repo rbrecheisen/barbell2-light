@@ -2,6 +2,7 @@ import os
 import numpy as np
 
 from pydicom._dicom_dict import DicomDictionary
+from .tag2numpy import Tag2NumPy
 
 
 def is_dicom_file(file_path_or_obj):
@@ -46,6 +47,13 @@ def get_pixels(p, normalize=False):
     if isinstance(normalize, list):
         return (pixels + np.min(pixels)) / (np.max(pixels) - np.min(pixels)) * normalize[1] + normalize[0]
     return pixels
+
+
+def get_tag_pixels(f, shape):
+    converter = Tag2NumPy(shape)
+    converter.set_input_tag_file_path(f)
+    converter.execute()
+    return converter.get_output_numpy_array()
 
 
 def is_compressed(p):
