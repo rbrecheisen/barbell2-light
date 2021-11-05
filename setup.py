@@ -18,7 +18,7 @@ requirements = [
     'pydicom',
     'cmd2',
     'pandas',
-    'gnureadline',
+    # 'gnureadline',
 ]
 
 setup_requirements = []
@@ -49,11 +49,6 @@ setup(
     name='barbell2light',
     packages=find_packages(include=['barbell2light', 'barbell2light.*']),
     setup_requires=setup_requirements,
-    entry_points={
-        'console_scripts': [
-            'dicomexplorer=barbell2light.dicom.dicomexplorer:main',
-        ],
-    },
     test_suite='tests',
     tests_require=test_requirements,
     url='https://github.com/rbrecheisen/barbell2light',
