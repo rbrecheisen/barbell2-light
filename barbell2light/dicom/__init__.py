@@ -25,7 +25,18 @@ def is_tag_file(file_path):
     return file_path.endswith('.tag') and not file_path.startswith('._')
 
 
-def tag_for_name(name):
+def get_tag_file_for_dicom(dcm_file):
+    tag_file = os.path.splitext(dcm_file)[0] + '.tag'
+    if not os.path.isfile(tag_file):
+        tag_file = dcm_file + '.tag'
+        if not os.path.isfile(tag_file):
+            print(f'Could not find TAG file for DICOM file {dcm_file}')
+            return None
+        return tag_file
+    return tag_file
+
+
+def get_dicom_tag_for_name(name):
     for key, value in DicomDictionary.items():
         if name == value[4]:
             return hex(int(key))

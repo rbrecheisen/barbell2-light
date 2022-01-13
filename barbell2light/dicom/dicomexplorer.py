@@ -2,7 +2,7 @@ import os
 import cmd2
 import pydicom
 
-from barbell2light.dicom import is_dicom_file, tag_for_name, get_dictionary_items
+from barbell2light.dicom import is_dicom_file, get_dicom_tag_for_name, get_dictionary_items
 
 
 class DicomExplorer:
@@ -85,7 +85,7 @@ class DicomExplorer:
         return outputs
 
     def get_tag_values(self, tag_name, verbose=True):
-        tag = tag_for_name(tag_name)
+        tag = get_dicom_tag_for_name(tag_name)
         if verbose:
             print(tag)
         values = {}
