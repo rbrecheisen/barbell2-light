@@ -20,6 +20,8 @@ requirements = [
     'pandas',
     'numpy',
     'matplotlib',
+    'python-gdcm',
+    'pylibjpeg',
     # 'gnureadline',
 ]
 

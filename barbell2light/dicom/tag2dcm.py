@@ -81,16 +81,12 @@ class Tag2Dcm:
 
     def execute(self):
         p = pydicom.dcmread(self.dcm_file)
-        try:
-            pixels = p.pixel_array
-        except:
-            print('Pixels could not be read, possibly due to compression. Decompressing now...')
-            self.dcm_file = decompress(self.dcm_file)
-            p = pydicom.dcmread(self.dcm_file)
-            pixels = p.pixel_array
-        pixels = pixels.astype(float)
+        if p.file_meta.TransferSyntaxUID.is_compressed:
+            p.decompress()
+        pixels = p.pixel_array
         pixels = pixels * p.RescaleSlope + p.RescaleIntercept
         pixels = self.apply_ct_window(pixels, [400, 50])
+        pixels = pixels.astype(float)
         pixels_org = pixels.copy()
         converter = tag2numpy.Tag2NumPy(pixels.shape)
         converter.set_input_tag_file_path(self.tag_file)
