@@ -1,4 +1,9 @@
 import os
+import shutil
+import pydicom
+import numpy as np
+
+from barbell2light.dicom import is_dicom_file, is_tag_file, get_tag_file_for_dicom, tag2numpy, decompress
 
 
 class Tag2Dcm:
@@ -6,15 +11,120 @@ class Tag2Dcm:
     def __init__(self):
         self.dcm_file = None
         self.tag_file = None
+        self.output_dir = '.'
+        self.output_dcm_file = None
+        self.output_tag_file = None
+        self.output_tag_dcm_file = None
+        self.copy_original_dcm_file_to_output_dir = False
+        self.copy_original_tag_file_to_output_dir = False
+        self.verbose = False
 
     def set_dicom_and_tag_file(self, dcm_file, tag_file):
-        pass
+        if not is_dicom_file(dcm_file):
+            raise RuntimeError(f'File {dcm_file} is not a DICOM file')
+        if not is_tag_file(tag_file):
+            raise RuntimeError(f'File {tag_file} does not have .tag extension')
+        if get_tag_file_for_dicom(dcm_file) != tag_file:
+            raise RuntimeError(f'Files {dcm_file} and {tag_file} do not seem to belong together')
+        self.dcm_file = dcm_file
+        self.tag_file = tag_file
 
     def set_output_dir(self, output_dir):
-        pass
+        if not os.path.isdir(output_dir):
+            raise RuntimeError(f'Output directory {output_dir} does not exist')
+        self.output_dir = output_dir
+
+    def set_copy_original_dcm_file_to_output_dir(self, copy_original_dcm_file_to_output_dir):
+        self.copy_original_dcm_file_to_output_dir = copy_original_dcm_file_to_output_dir
+
+    def set_copy_original_tag_file_to_output_dir(self, copy_original_tag_file_to_output_dir):
+        self.copy_original_tag_file_to_output_dir = copy_original_tag_file_to_output_dir
+
+    def set_verbose(self, verbose):
+        self.verbose = verbose
+
+    @staticmethod
+    def apply_ct_window(pix, window):
+        result = (pix - window[1] + 0.5 * window[0])/window[0]
+        result[result < 0] = 0
+        result[result > 1] = 1
+        return result
+
+    @staticmethod
+    def get_color_map():
+        color_map = []
+        for i in range(256):
+            if i == 1:  # muscle
+                color_map.append([255, 0, 0])
+            elif i == 2:  # inter-muscular adipose tissue
+                color_map.append([0, 255, 0])
+            elif i == 5:  # visceral adipose tissue
+                color_map.append([255, 255, 0])
+            elif i == 7:  # subcutaneous adipose tissue
+                color_map.append([0, 255, 255])
+            elif i == 12:  # unknown
+                color_map.append([0, 0, 255])
+            else:
+                color_map.append([0, 0, 0])
+        return color_map
 
     def execute(self):
-        pass
+        p = pydicom.dcmread(self.dcm_file)
+        try:
+            pixels = p.pixel_array
+        except:
+            print('Pixels could not be read, possibly due to compression. Decompressing now...')
+            self.dcm_file = decompress(self.dcm_file)
+            p = pydicom.dcmread(self.dcm_file)
+            pixels = p.pixel_array
+        pixels = pixels.astype(float)
+        pixels = pixels * p.RescaleSlope + p.RescaleIntercept
+        pixels = self.apply_ct_window(pixels, [400, 50])
+        converter = tag2numpy.Tag2NumPy(pixels.shape)
+        converter.set_input_tag_file_path(self.tag_file)
+        converter.execute()
+        pixels_tag = converter.get_output_numpy_array()
+        pixels_new = np.zeros((*pixels_tag.shape, 3), dtype=np.uint8)
+        np.take(self.get_color_map(), pixels_tag, axis=0, out=pixels_new)
+        p.PhotometricInterpretation = 'RGB'
+        p.SamplesPerPixel = 3
+        p.BitsAllocated = 8
+        p.BitsStored = 8
+        p.HighBit = 7
+        p.add_new(0x00280006, 'US', 0)
+        p.is_little_endian = True
+        p.fix_meta_info()
+        p.PixelData = pixels_new.tobytes()
+        p.SOPInstanceUID = '{}.9999'.format(p.SOPInstanceUID)
+        self.output_dcm_file = os.path.join(self.output_dir, os.path.split(self.dcm_file)[1])
+        if self.copy_original_dcm_file_to_output_dir:
+            shutil.copy(self.dcm_file, self.output_dir)
+        self.output_tag_file = os.path.join(self.output_dir, os.path.split(self.tag_file)[1])
+        if self.copy_original_tag_file_to_output_dir:
+            shutil.copy(self.tag_file, self.output_dir)
+        self.output_tag_dcm_file = os.path.join(self.output_dir, os.path.split(self.tag_file)[1] + '.dcm')
+        p.save_as(self.output_tag_dcm_file)
+
+    def get_output_dcm_file(self):
+        return self.output_dcm_file
+
+    def get_output_tag_file(self):
+        return self.output_tag_file
+
+    def get_output_tag_dcm_file(self):
+        return self.output_tag_dcm_file
+
+
+if __name__ == '__main__':
+    t2d = Tag2Dcm()
+    t2d.set_dicom_and_tag_file(
+        dcm_file='../../data/10.dcm',
+        tag_file='../../data/10.tag',
+    )
+    t2d.set_output_dir(output_dir='../../data')
+    t2d.set_copy_original_dcm_file_to_output_dir(False)
+    t2d.set_copy_original_tag_file_to_output_dir(False)
+    t2d.execute()
 
 
 # import os

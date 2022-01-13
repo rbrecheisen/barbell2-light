@@ -18,6 +18,7 @@ requirements = [
     'pydicom',
     'cmd2',
     'pandas',
+    'numpy',
     # 'gnureadline',
 ]
 
