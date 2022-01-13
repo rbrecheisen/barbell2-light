@@ -2,6 +2,7 @@ import os
 import shutil
 import pydicom
 import numpy as np
+import matplotlib.pyplot as plt
 
 from barbell2light.dicom import is_dicom_file, is_tag_file, get_tag_file_for_dicom, tag2numpy, decompress
 
@@ -15,8 +16,12 @@ class Tag2Dcm:
         self.output_dcm_file = None
         self.output_tag_file = None
         self.output_tag_dcm_file = None
+        self.output_dcm_png_file = None
+        self.output_tag_dcm_png_file = None
         self.copy_original_dcm_file_to_output_dir = False
         self.copy_original_tag_file_to_output_dir = False
+        self.png_figure_size = (10, 10)
+        self.create_pngs = False
         self.verbose = False
 
     def set_dicom_and_tag_file(self, dcm_file, tag_file):
@@ -39,6 +44,12 @@ class Tag2Dcm:
 
     def set_copy_original_tag_file_to_output_dir(self, copy_original_tag_file_to_output_dir):
         self.copy_original_tag_file_to_output_dir = copy_original_tag_file_to_output_dir
+
+    def set_png_figure_size(self, png_figure_size):
+        self.png_figure_size = png_figure_size
+
+    def set_create_pngs(self, create_pngs):
+        self.create_pngs = create_pngs
 
     def set_verbose(self, verbose):
         self.verbose = verbose
@@ -80,6 +91,7 @@ class Tag2Dcm:
         pixels = pixels.astype(float)
         pixels = pixels * p.RescaleSlope + p.RescaleIntercept
         pixels = self.apply_ct_window(pixels, [400, 50])
+        pixels_org = pixels.copy()
         converter = tag2numpy.Tag2NumPy(pixels.shape)
         converter.set_input_tag_file_path(self.tag_file)
         converter.execute()
@@ -104,9 +116,26 @@ class Tag2Dcm:
             shutil.copy(self.tag_file, self.output_dir)
         self.output_tag_dcm_file = os.path.join(self.output_dir, os.path.split(self.tag_file)[1] + '.dcm')
         p.save_as(self.output_tag_dcm_file)
+        if self.create_pngs:
+            fig = plt.figure(figsize=self.png_figure_size)
+            ax = fig.add_subplot(1, 1, 1)
+            plt.imshow(pixels_org, cmap='gray')
+            ax.axis('off')
+            self.output_dcm_png_file = os.path.join(self.output_dir, self.get_output_dcm_file_name() + '.png')
+            plt.savefig(self.output_dcm_png_file, bbox_inches='tight')
+            fig = plt.figure(figsize=self.png_figure_size)
+            ax = fig.add_subplot(1, 1, 1)
+            plt.imshow(pixels_new)
+            ax.axis('off')
+            self.output_tag_dcm_png_file = os.path.join(self.output_dir, self.get_output_tag_dcm_file_name() + '.png')
+            plt.savefig(self.output_tag_dcm_png_file, bbox_inches='tight')
+            plt.close('all')
 
     def get_output_dcm_file(self):
         return self.output_dcm_file
+
+    def get_output_dcm_png_file(self):
+        return self.output_dcm_png_file
 
     def get_output_dcm_file_name(self):
         return os.path.split(self.get_output_dcm_file())[1]
@@ -119,6 +148,9 @@ class Tag2Dcm:
 
     def get_output_tag_dcm_file(self):
         return self.output_tag_dcm_file
+
+    def get_output_tag_dcm_png_file(self):
+        return self.output_tag_dcm_png_file
 
     def get_output_tag_dcm_file_name(self):
         return os.path.split(self.get_output_tag_dcm_file())[1]

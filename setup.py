@@ -19,6 +19,7 @@ requirements = [
     'cmd2',
     'pandas',
     'numpy',
+    'matplotlib',
     # 'gnureadline',
 ]
 
