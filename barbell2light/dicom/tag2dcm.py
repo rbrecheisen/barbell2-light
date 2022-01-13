@@ -108,11 +108,20 @@ class Tag2Dcm:
     def get_output_dcm_file(self):
         return self.output_dcm_file
 
+    def get_output_dcm_file_name(self):
+        return os.path.split(self.get_output_dcm_file())[1]
+
     def get_output_tag_file(self):
         return self.output_tag_file
 
+    def get_output_tag_file_name(self):
+        return os.path.split(self.get_output_tag_file())[1]
+
     def get_output_tag_dcm_file(self):
         return self.output_tag_dcm_file
+
+    def get_output_tag_dcm_file_name(self):
+        return os.path.split(self.get_output_tag_dcm_file())[1]
 
 
 if __name__ == '__main__':
