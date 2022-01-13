@@ -36,8 +36,12 @@ class Tag2Dcm:
 
     def set_output_dir(self, output_dir):
         if not os.path.isdir(output_dir):
-            raise RuntimeError(f'Output directory {output_dir} does not exist')
+            print(f'Output directory {output_dir} does not exist, creating it...')
+            os.makedirs(output_dir, exist_ok=False)
         self.output_dir = output_dir
+
+    def get_output_dir(self):
+        return self.output_dir
 
     def set_copy_original_dcm_file_to_output_dir(self, copy_original_dcm_file_to_output_dir):
         self.copy_original_dcm_file_to_output_dir = copy_original_dcm_file_to_output_dir
@@ -47,6 +51,9 @@ class Tag2Dcm:
 
     def set_png_figure_size(self, png_figure_size):
         self.png_figure_size = png_figure_size
+
+    def get_png_figure_size(self):
+        return self.png_figure_size
 
     def set_create_pngs(self, create_pngs):
         self.create_pngs = create_pngs
