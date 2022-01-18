@@ -25,15 +25,23 @@ def is_tag_file(file_path):
     return file_path.endswith('.tag') and not file_path.startswith('._')
 
 
-def get_tag_file_for_dicom(dcm_file):
-    tag_file = os.path.splitext(dcm_file)[0] + '.tag'
+def get_tag_file_for_dicom(dcm_file, ext='.tag'):
+    tag_file = os.path.splitext(dcm_file)[0] + ext
     if not os.path.isfile(tag_file):
-        tag_file = dcm_file + '.tag'
+        tag_file = dcm_file + ext
         if not os.path.isfile(tag_file):
             print(f'Could not find TAG file for DICOM file {dcm_file}')
             return None
         return tag_file
     return tag_file
+
+
+def is_numpy_file(file_path):
+    return file_path.endswith('.npy') and not file_path.startswith('._')
+
+
+def get_numpy_file_for_dicom(dcm_file):
+    return get_tag_file_for_dicom(dcm_file, ext='.npy')
 
 
 def get_dicom_tag_for_name(name):

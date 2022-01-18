@@ -12,6 +12,7 @@ class Tag2Dcm:
     def __init__(self):
         self.dcm_file = None
         self.tag_file = None
+        self.numpy_file = None
         self.output_dir = '.'
         self.output_dcm_file = None
         self.output_tag_file = None
@@ -33,6 +34,10 @@ class Tag2Dcm:
             raise RuntimeError(f'Files {dcm_file} and {tag_file} do not seem to belong together')
         self.dcm_file = dcm_file
         self.tag_file = tag_file
+
+    def set_dicom_and_numpy_file(self, dcm_file, numpy_file):
+        if not is_dicom_file(dcm_file):
+            raise RuntimeError(f'File {dcm_file} is not a DICOM file')
 
     def set_output_dir(self, output_dir):
         if not os.path.isdir(output_dir):
