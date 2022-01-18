@@ -4,7 +4,8 @@ import pydicom
 import numpy as np
 import matplotlib.pyplot as plt
 
-from barbell2light.dicom import is_dicom_file, is_tag_file, get_tag_file_for_dicom, tag2numpy, decompress
+from barbell2light.dicom import is_dicom_file, is_tag_file, is_numpy_file, get_tag_file_for_dicom, \
+    get_numpy_file_for_dicom, tag2numpy, decompress
 
 
 class Tag2Dcm:
@@ -38,6 +39,12 @@ class Tag2Dcm:
     def set_dicom_and_numpy_file(self, dcm_file, numpy_file):
         if not is_dicom_file(dcm_file):
             raise RuntimeError(f'File {dcm_file} is not a DICOM file')
+        if not is_numpy_file(numpy_file):
+            raise RuntimeError(f'File {numpy_file} does not have .npy extension')
+        if get_numpy_file_for_dicom(dcm_file) != numpy_file:
+            raise RuntimeError(f'Files {dcm_file} and {numpy_file} do not seem to belong together')
+        self.dcm_file = dcm_file
+        self.numpy_file = numpy_file
 
     def set_output_dir(self, output_dir):
         if not os.path.isdir(output_dir):
@@ -100,10 +107,13 @@ class Tag2Dcm:
         pixels = self.apply_ct_window(pixels, [400, 50])
         pixels = pixels.astype(float)
         pixels_org = pixels.copy()
-        converter = tag2numpy.Tag2NumPy(pixels.shape)
-        converter.set_input_tag_file_path(self.tag_file)
-        converter.execute()
-        pixels_tag = converter.get_output_numpy_array()
+        if self.tag_file is not None:
+            converter = tag2numpy.Tag2NumPy(pixels.shape)
+            converter.set_input_tag_file_path(self.tag_file)
+            converter.execute()
+            pixels_tag = converter.get_output_numpy_array()
+        else:
+            pixels_tag = np.load(self.numpy_file)
         pixels_new = np.zeros((*pixels_tag.shape, 3), dtype=np.uint8)
         np.take(self.get_color_map(), pixels_tag, axis=0, out=pixels_new)
         p.PhotometricInterpretation = 'RGB'
