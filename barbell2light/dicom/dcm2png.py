@@ -51,3 +51,6 @@ class Dcm2Png:
         self.output_png_file = os.path.join(self.output_dir, self.dcm_file_name + '.png')
         plt.savefig(self.output_png_file, bbox_inches='tight')
         plt.close('all')
+
+    def get_output_png_file(self):
+        return self.output_png_file
