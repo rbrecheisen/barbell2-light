@@ -32,7 +32,9 @@ class Tag2Dcm:
         if not is_tag_file(tag_file):
             raise RuntimeError(f'File {tag_file} does not have .tag extension')
         if get_tag_file_for_dicom(dcm_file) != tag_file:
-            raise RuntimeError(f'Files {dcm_file} and {tag_file} do not seem to belong together')
+            # Just print a warning since it's suspicious. It might happen though that the TAG file
+            # name is not the same as the DICOM file
+            print(f'Files {dcm_file} and {tag_file} do not seem to belong together')
         self.dcm_file = dcm_file
         self.tag_file = tag_file
 
@@ -41,8 +43,6 @@ class Tag2Dcm:
             raise RuntimeError(f'File {dcm_file} is not a DICOM file')
         if not is_numpy_file(numpy_file):
             raise RuntimeError(f'File {numpy_file} does not have .npy extension')
-        if get_numpy_file_for_dicom(dcm_file) != numpy_file:
-            raise RuntimeError(f'Files {dcm_file} and {numpy_file} do not seem to belong together')
         self.dcm_file = dcm_file
         self.numpy_file = numpy_file
 
