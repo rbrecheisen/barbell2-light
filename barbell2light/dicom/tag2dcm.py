@@ -35,6 +35,7 @@ class Tag2Dcm:
             raise RuntimeError(f'Files {dcm_file} and {tag_file} do not seem to belong together')
         self.dcm_file = dcm_file
         self.tag_file = tag_file
+        self.numpy_file = None
 
     def set_dicom_and_numpy_file(self, dcm_file, numpy_file):
         if not is_dicom_file(dcm_file):
@@ -44,6 +45,7 @@ class Tag2Dcm:
         if get_numpy_file_for_dicom(dcm_file) != numpy_file:
             raise RuntimeError(f'Files {dcm_file} and {numpy_file} do not seem to belong together')
         self.dcm_file = dcm_file
+        self.tag_file = None
         self.numpy_file = numpy_file
 
     def set_output_dir(self, output_dir):
@@ -114,6 +116,7 @@ class Tag2Dcm:
             pixels_tag = converter.get_output_numpy_array()
         else:
             pixels_tag = np.load(self.numpy_file)
+            # pixels_tag = pixels_tag.reshape(pixels.shape)
         pixels_new = np.zeros((*pixels_tag.shape, 3), dtype=np.uint8)
         np.take(self.get_color_map(), pixels_tag, axis=0, out=pixels_new)
         p.PhotometricInterpretation = 'RGB'
