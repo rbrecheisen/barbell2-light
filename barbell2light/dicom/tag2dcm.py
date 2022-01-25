@@ -20,8 +20,10 @@ class Tag2Dcm:
         self.output_tag_dcm_file = None
         self.output_dcm_png_file = None
         self.output_tag_dcm_png_file = None
+        self.output_numpy_file = None
         self.copy_original_dcm_file_to_output_dir = False
         self.copy_original_tag_file_to_output_dir = False
+        self.copy_original_numpy_file_to_output_dir = False
         self.png_figure_size = (10, 10)
         self.create_pngs = False
         self.verbose = False
@@ -32,7 +34,9 @@ class Tag2Dcm:
         if not is_tag_file(tag_file):
             raise RuntimeError(f'File {tag_file} does not have .tag extension')
         if get_tag_file_for_dicom(dcm_file) != tag_file:
-            raise RuntimeError(f'Files {dcm_file} and {tag_file} do not seem to belong together')
+            # Just print a warning since it's suspicious. It might happen though that the TAG file
+            # name is not the same as the DICOM file
+            print(f'Files {dcm_file} and {tag_file} do not seem to belong together')
         self.dcm_file = dcm_file
         self.tag_file = tag_file
         self.numpy_file = None
@@ -42,8 +46,6 @@ class Tag2Dcm:
             raise RuntimeError(f'File {dcm_file} is not a DICOM file')
         if not is_numpy_file(numpy_file):
             raise RuntimeError(f'File {numpy_file} does not have .npy extension')
-        if get_numpy_file_for_dicom(dcm_file) != numpy_file:
-            raise RuntimeError(f'Files {dcm_file} and {numpy_file} do not seem to belong together')
         self.dcm_file = dcm_file
         self.tag_file = None
         self.numpy_file = numpy_file
@@ -62,6 +64,9 @@ class Tag2Dcm:
 
     def set_copy_original_tag_file_to_output_dir(self, copy_original_tag_file_to_output_dir):
         self.copy_original_tag_file_to_output_dir = copy_original_tag_file_to_output_dir
+
+    def set_copy_original_numpy_file_to_output_dir(self, copy_original_numpy_file_to_output_dir):
+        self.copy_original_numpy_file_to_output_dir = copy_original_numpy_file_to_output_dir
 
     def set_png_figure_size(self, png_figure_size):
         self.png_figure_size = png_figure_size
@@ -129,12 +134,15 @@ class Tag2Dcm:
         p.fix_meta_info()
         p.PixelData = pixels_new.tobytes()
         p.SOPInstanceUID = '{}.9999'.format(p.SOPInstanceUID)
-        self.output_dcm_file = os.path.join(self.output_dir, os.path.split(self.dcm_file)[1])
         if self.copy_original_dcm_file_to_output_dir:
+            self.output_dcm_file = os.path.join(self.output_dir, os.path.split(self.dcm_file)[1])
             shutil.copy(self.dcm_file, self.output_dir)
-        self.output_tag_file = os.path.join(self.output_dir, os.path.split(self.tag_file)[1])
         if self.copy_original_tag_file_to_output_dir:
+            self.output_tag_file = os.path.join(self.output_dir, os.path.split(self.tag_file)[1])
             shutil.copy(self.tag_file, self.output_dir)
+        if self.copy_original_numpy_file_to_output_dir:
+            self.output_numpy_file = os.path.join(self.output_dir, os.path.split(self.numpy_file)[1])
+            shutil.copy(self.numpy_file, self.output_dir)
         self.output_tag_dcm_file = os.path.join(self.output_dir, os.path.split(self.tag_file)[1] + '.dcm')
         p.save_as(self.output_tag_dcm_file)
         if self.create_pngs:
@@ -169,6 +177,12 @@ class Tag2Dcm:
 
     def get_output_tag_file_name(self):
         return os.path.split(self.get_output_tag_file())[1]
+
+    def get_output_numpy_file(self):
+        return self.output_numpy_file
+
+    def get_output_numpy_file_name(self):
+        return os.path.split(self.get_output_numpy_file())[1]
 
     def get_output_tag_dcm_file(self):
         return self.output_tag_dcm_file
