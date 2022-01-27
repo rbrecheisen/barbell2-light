@@ -117,8 +117,10 @@ class Tag2Dcm:
             converter.set_input_tag_file_path(self.tag_file)
             converter.execute()
             pixels_tag = converter.get_output_numpy_array()
-        else:
+        elif self.numpy_file is not None:
             pixels_tag = np.load(self.numpy_file)
+        else:
+            raise RuntimeError('Both TAG file and NumPy file paths are None')
         pixels_new = np.zeros((*pixels_tag.shape, 3), dtype=np.uint8)
         np.take(self.get_color_map(), pixels_tag, axis=0, out=pixels_new)
         p.PhotometricInterpretation = 'RGB'
@@ -131,17 +133,24 @@ class Tag2Dcm:
         p.fix_meta_info()
         p.PixelData = pixels_new.tobytes()
         p.SOPInstanceUID = '{}.9999'.format(p.SOPInstanceUID)
+        # TODO: ==================
+        # TODO: Rethink this code and what to do when either self.tag_file or self.numpy_file is None
+        # TODO: I think I'm mixing responsibilities too much here.
+        # TODO: Create a separate component for NumPy files!!!
+        # TODO: These components have shared code, e.g., replacing DICOM pixels
+        # TODO: ==================
         if self.copy_original_dcm_file_to_output_dir:
             self.output_dcm_file = os.path.join(self.output_dir, os.path.split(self.dcm_file)[1])
             shutil.copy(self.dcm_file, self.output_dir)
-        if self.copy_original_tag_file_to_output_dir:
+        if self.copy_original_tag_file_to_output_dir and self.tag_file is not None:
             self.output_tag_file = os.path.join(self.output_dir, os.path.split(self.tag_file)[1])
             shutil.copy(self.tag_file, self.output_dir)
-        if self.copy_original_numpy_file_to_output_dir:
+        if self.copy_original_numpy_file_to_output_dir and self.numpy_file is not None:
             self.output_numpy_file = os.path.join(self.output_dir, os.path.split(self.numpy_file)[1])
             shutil.copy(self.numpy_file, self.output_dir)
-        self.output_tag_dcm_file = os.path.join(self.output_dir, os.path.split(self.tag_file)[1] + '.dcm')
-        p.save_as(self.output_tag_dcm_file)
+        if self.tag_file is not None:
+            self.output_tag_dcm_file = os.path.join(self.output_dir, os.path.split(self.tag_file)[1] + '.dcm')
+            p.save_as(self.output_tag_dcm_file)
         if self.create_pngs:
             fig = plt.figure(figsize=self.png_figure_size)
             ax = fig.add_subplot(1, 1, 1)
