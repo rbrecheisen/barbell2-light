@@ -39,6 +39,7 @@ class Tag2Dcm:
             print(f'Files {dcm_file} and {tag_file} do not seem to belong together')
         self.dcm_file = dcm_file
         self.tag_file = tag_file
+        self.numpy_file = None
 
     def set_dicom_and_numpy_file(self, dcm_file, numpy_file):
         if not is_dicom_file(dcm_file):
@@ -46,6 +47,7 @@ class Tag2Dcm:
         if not is_numpy_file(numpy_file):
             raise RuntimeError(f'File {numpy_file} does not have .npy extension')
         self.dcm_file = dcm_file
+        self.tag_file = None
         self.numpy_file = numpy_file
 
     def set_output_dir(self, output_dir):
@@ -119,8 +121,12 @@ class Tag2Dcm:
             pixels_tag = converter.get_output_numpy_array()
         elif self.numpy_file is not None:
             pixels_tag = np.load(self.numpy_file)
+<<<<<<< HEAD
         else:
             raise RuntimeError('Both TAG file and NumPy file paths are None')
+=======
+            # pixels_tag = pixels_tag.reshape(pixels.shape)
+>>>>>>> 0f2fbd542d55d5d6c5f5b973500bd8fee74ac83e
         pixels_new = np.zeros((*pixels_tag.shape, 3), dtype=np.uint8)
         np.take(self.get_color_map(), pixels_tag, axis=0, out=pixels_new)
         p.PhotometricInterpretation = 'RGB'
